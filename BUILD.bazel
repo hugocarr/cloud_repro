@@ -1,0 +1,59 @@
+load("@aspect_bazel_lib//lib:copy_to_bin.bzl", "copy_to_bin")
+load("@npm//:defs.bzl", "npm_link_all_packages")
+load("@npm//:tsconfig-to-swcconfig/package_json.bzl", tsconfig_to_swcconfig = "bin")
+load("//:internal_modules/defs.bzl", "link_internal_modules_packages")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files([
+    ".github/workflows/deploy.yaml",
+    "pyproject.toml",
+    "conftest.py",
+    "requirements.txt",
+    "tsconfig.json",
+    "jest.config.mjs",
+    "pnpm-workspace.yaml",
+    ".kube/config",
+])
+
+# First, link all packages defined in the top-level package.json, then, link all of our
+# internal_modules packages:
+npm_link_all_packages()
+
+link_internal_modules_packages()
+
+alias(
+    name = "aws_cdk_lib",
+    actual = "@workspace_python_deps_aws_cdk_lambda_layer_kubectl_v23//:wheel",
+)
+
+# https://github.com/aspect-build/rules_swc/blob/main/docs/tsconfig.md#generate-the-swcrc
+tsconfig_to_swcconfig.t2s(
+    name = "write_swcrc",
+    srcs = ["tsconfig.json"],
+    args = [
+        "--filename",
+        "$(location tsconfig.json)",
+    ],
+    stdout = ".swcrc",
+)
+
+copy_to_bin(
+    name = "prettierrc",
+    srcs = [".prettierrc"],
+)
+
+copy_to_bin(
+    name = "prettierignore",
+    srcs = [".prettierignore"],
+)
+
+copy_to_bin(
+    name = "tsconfig",
+    srcs = ["tsconfig.json"],
+)
+
+copy_to_bin(
+    name = "jestconfig",
+    srcs = ["jest.config.mjs"],
+)

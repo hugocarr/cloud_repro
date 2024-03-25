@@ -1,0 +1,16 @@
+[default]
+greeting = "Hello"
+debug = false
+
+[development]
+env = "development"
+debug = true
+
+[preprod]
+env = "preprod"
+
+[staging]
+env = "staging"
+
+[production]
+env = "production"
