@@ -1,0 +1,9 @@
+load("@aspect_rules_py//py:defs.bzl", "py_venv")
+load("@workspace_python_deps//:requirements.bzl", "all_requirements")
+
+py_venv(
+    name = "venv",
+    location = "./",
+    tags = ["manual"],
+    deps = all_requirements,
+)

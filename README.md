@@ -1,6 +1,5 @@
 # `cloud_repro`
-This is a repro case for a problem I am having with multirun:
-https://bazelbuild.slack.com/archives/CD4MDG09Z/p1711041846373839
+This is a repro case for a problem I am having with a large memory usage in Bazel with Python requirements
 
 ## Repro steps
 
@@ -11,18 +10,4 @@ scripts to work with it.
 
 1. Run `scripts/shell.sh` to get a shell inside the container
 
-1. Run `bazel run //http_server` to run WITHOUT multirun. You should see something like this:
-
-    ````
-    * Running on all addresses (0.0.0.0)
-    * Running on http://127.0.0.1:5000
-    * Running on http://172.17.0.2:5000
-    Press CTRL+C to quit
-    ````
-
-1. Run` bazel run //http_server:multirun` to run WITH multirun. You should see an error like this:
-
-    ````
-    from opentelemetry.instrumentation.flask import FlaskInstrumentor
-    ModuleNotFoundError: No module named 'opentelemetry.instrumentation'
-    ````
+1. Run `bazel run //:venv` to start using a LOT of memory

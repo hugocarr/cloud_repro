@@ -1,0 +1,15 @@
+load("@workspace_python_deps//:requirements.bzl", "all_requirements")
+
+py_library(
+	name = "hello_lib",
+	srcs = ["hello.py"],
+)
+
+py_binary(
+	name = "hello",
+	srcs = ["hello.py"],
+	main = "hello.py",
+	deps = [
+		":hello_lib",
+	] + all_requirements,
+)

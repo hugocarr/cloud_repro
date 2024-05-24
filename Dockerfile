@@ -15,34 +15,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         less \
         sudo \
         unzip \
-        wget && \
-        \
-    install -m 0755 -d /etc/apt/keyrings && \
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
-    chmod a+r /etc/apt/keyrings/docker.gpg && \
-    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
-    chmod a+r /etc/apt/keyrings/nodesource.gpg && \
-    echo \
-        "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
-        "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
-        sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-    echo \
-        "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" | \
-        sudo tee /etc/apt/sources.list.d/nodesource.list > /dev/null && \
-    apt-get update && apt-get install -y --no-install-recommends \
-        containerd.io \
-        docker-ce \
-        docker-ce-cli \
-        docker-buildx-plugin \
-        docker-compose-plugin \
-        gh \
-        lsof \
-        jq \
-        nodejs \
-        zsh \
-        vim \
-        nano \
+        wget \
         python3.11-dev \
+        libgdal-dev \
+        libproj-dev \
+        htop \
         && \
     apt-get clean \
     && rm -rf /usr/share/doc \
@@ -54,19 +31,8 @@ COPY scripts/install_bazel.sh .
 RUN ./install_bazel.sh && rm ./install_bazel.sh
 
 # create user and default settings for development tasks like git/docker
-ARG user
-ARG uid
-ENV USER=${user}
-ENV UID=${uid}
-RUN groupadd --gid 121 cloud && \
-    useradd --shell /bin/bash --uid ${UID} --create-home -g cloud "$USER" && \
-    echo "$USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
-    newgrp docker && \
-    usermod -aG docker $USER && \
-    touch /etc/gitconfig && \
-    git config --system --add safe.directory /cloud
-
-USER "${USER}"
-RUN git config --global --add safe.directory /cloud
-
+RUN groupadd --gid 121 cloud
+RUN useradd --shell /bin/bash --create-home -g cloud "nonroot" 
+RUN echo "$nonroot ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+USER "nonroot"
 WORKDIR /cloud
