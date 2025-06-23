@@ -4,9 +4,10 @@ load("@pypi//:requirements.bzl", "requirement")
 
 py_library(
     name = "http_server_src",
-    srcs = ["main.py", "__init__.py"],
+    srcs = ["main.py", "server.py", "__init__.py"],
     deps = [
-        requirement("flask"),
+        requirement("fastapi"),
+        requirement("uvicorn"),
     ],
 )
 
