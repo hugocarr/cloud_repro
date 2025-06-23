@@ -1,41 +1,20 @@
 load("@aspect_rules_py//py:defs.bzl", "py_binary", "py_library")
-load("@rules_multirun//:defs.bzl", "command", "multirun")
-load("@workspace_python_deps//:requirements.bzl", "requirement")
+load("@pypi//:requirements.bzl", "requirement")
 
-HTTP_PORT = 7777
-
-multirun(
-    name = "multirun",
-    commands = [":run_http_server"],
-)
-command(
-    name = "run_http_server",
-    command = ":http_server",
-)
 
 py_library(
-    name = "src",
-    srcs = glob(["**/*.py"]),
-    imports = [
-        ".",
-    ],
+    name = "http_server_src",
+    srcs = ["main.py", "__init__.py"],
     deps = [
         requirement("flask"),
-        requirement("flask-cors"),
-        requirement("opentelemetry-api"),
-        requirement("opentelemetry-exporter-otlp-proto-http"),
-        requirement("opentelemetry-instrumentation"),
-        requirement("opentelemetry-instrumentation-flask"),
-        requirement("opentelemetry-instrumentation-fastapi"),
-        requirement("opentelemetry-instrumentation-requests"),
-        requirement("opentelemetry-sdk"),
     ],
 )
 
 py_binary(
     name = "http_server",
     main = "main.py",
+    srcs = [":http_server_src"],
     deps = [
-        ":src",
+        ":http_server_src",
     ],
 )

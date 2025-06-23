@@ -3,8 +3,6 @@ from flask import (
 	jsonify,
 )
 
-from opentelemetry.instrumentation.flask import FlaskInstrumentor
-
 
 def create_app():
 	app = Flask("hello_world_http_server")
@@ -18,9 +16,8 @@ def create_app():
 
 def main() -> None:
 	app = create_app()
-	FlaskInstrumentor().instrument_app(app)
 
-	app.run(host="0.0.0.0")
+	app.run(host="0.0.0.0", port=5001)
 
 
 if __name__ == "__main__":
